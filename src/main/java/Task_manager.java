@@ -1,4 +1,5 @@
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,11 +51,11 @@ public class Task_manager {
         try(Scanner scan = new Scanner(file)) {
             while (scan.hasNextLine()) {
                 taskListArr = Arrays.copyOf(taskListArr, taskListArr.length + 1);
-                String[] parts = scan.nextLine().split(", ");
-                taskListArr[taskListArr.length-1] = new String[parts.length];
-                for (int j=0; j<parts.length; j++){
-                    taskListArr[i][j] = parts[j];
-                }
+                /*String[] parts = scan.nextLine().split(", ");*/
+                taskListArr[taskListArr.length-1] = scan.nextLine().split(", ");
+              /*  for (int j=0; j<parts.length; j++){
+                    taskListArr[i][] = parts[];
+                }*/
                 i++;
             }
         } catch (FileNotFoundException e) {
@@ -73,15 +74,30 @@ public class Task_manager {
         }
     }
 
-    public static String[][] removeTask(String[][]taskListArr) {
+    public static boolean isNumber(String str){
+        if (NumberUtils.isParsable(str)) {
+            return Integer.parseInt(str) >= 0;
+        }
+        return false;
+    }
+
+    public static int getNumber (){
         Scanner scan = new Scanner(System.in);
         System.out.println("Please select the task to remove");
-        int elementToRemove = scan.nextInt();
+        String str = scan.nextLine();
+        while(!isNumber(str)){
+            System.out.println("Incorrect value");
+            str = scan.nextLine();
+        }
+        return Integer.parseInt(str);
+    }
+
+    public static String[][] removeTask(String[][]taskListArr) {
+
+        int elementToRemove = getNumber();
         while (elementToRemove < 0 || elementToRemove > taskListArr.length - 1) {
             System.out.println("There is no such task");
-            System.out.println();
-            System.out.println("Please select the task to remove");
-            elementToRemove = scan.nextInt();
+            elementToRemove = getNumber();
         }
         for (int i = elementToRemove; i < taskListArr.length - 1; i++) {
             for (int j = 0; j < 3; j++) {
@@ -195,10 +211,10 @@ public class Task_manager {
 
     public static void exit(String[][]taskListArr, String filename){
         String input = new String();
-        try(PrintWriter PrintWriter = new PrintWriter(filename)) {
+        try(PrintWriter printWriter = new PrintWriter(filename)) {
             for (int i=0; i<taskListArr.length; i++){
                 input = String.join(", ", taskListArr[i][0], taskListArr[i][1], taskListArr[i][2]);
-                PrintWriter.println(input);
+                printWriter.println(input);
             }
         }catch (FileNotFoundException e){
             e.printStackTrace();
